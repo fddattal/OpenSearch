@@ -201,10 +201,14 @@ public class TransportClusterStateAction extends TransportClusterManagerNodeRead
             if (request.indices().length > 0) {
                 mdBuilder.version(currentState.metadata().version());
                 String[] indices = indexNameExpressionResolver.concreteIndexNames(currentState, request);
-                for (String filteredIndex : indices) {
-                    IndexMetadata indexMetadata = currentState.metadata().index(filteredIndex);
-                    if (indexMetadata != null) {
-                        mdBuilder.put(indexMetadata, false);
+                if (indices.length == currentState.metadata().indices().size()) {
+                    mdBuilder = Metadata.builder(currentState.metadata());
+                } else {
+                    for (String filteredIndex : indices) {
+                        IndexMetadata indexMetadata = currentState.metadata().index(filteredIndex);
+                        if (indexMetadata != null) {
+                            mdBuilder.put(indexMetadata, false);
+                        }
                     }
                 }
             } else {

@@ -54,6 +54,7 @@ import org.opensearch.common.regex.Regex;
 import org.opensearch.common.settings.Setting;
 import org.opensearch.common.settings.Setting.Property;
 import org.opensearch.common.settings.Settings;
+import org.opensearch.common.util.Maps;
 import org.opensearch.common.xcontent.XContentHelper;
 import org.opensearch.core.common.Strings;
 import org.opensearch.core.common.io.stream.StreamInput;
@@ -1186,7 +1187,7 @@ public class Metadata implements Iterable<IndexMetadata>, Diffable<Metadata>, To
             this.persistentSettings = metadata.persistentSettings;
             this.hashesOfConsistentSettings = metadata.hashesOfConsistentSettings;
             this.version = metadata.version;
-            this.indices = new HashMap<>(metadata.indices);
+            this.indices = Maps.copyOnWriteMap(metadata.indices);
             this.templates = new HashMap<>(metadata.templates);
             this.customs = new HashMap<>(metadata.customs);
             this.previousMetadata = metadata;

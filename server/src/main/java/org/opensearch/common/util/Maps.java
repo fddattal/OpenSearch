@@ -32,8 +32,7 @@
 
 package org.opensearch.common.util;
 
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Map utility class.
@@ -60,6 +59,13 @@ public class Maps {
         return left.entrySet()
             .stream()
             .allMatch(e -> right.containsKey(e.getKey()) && Objects.deepEquals(e.getValue(), right.get(e.getKey())));
+    }
+
+    public static <K, V> Map<K, V> copyOnWriteMap(Map<K, V> src) {
+        if (src instanceof CopyOnWriteMap) {
+            return src;
+        }
+        return new CopyOnWriteMap<>(src);
     }
 
 }
