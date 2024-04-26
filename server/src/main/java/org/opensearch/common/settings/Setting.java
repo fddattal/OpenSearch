@@ -628,6 +628,22 @@ public class Setting<T> implements ToXContentObject {
         return fallbackSetting.get(secondary);
     }
 
+    public final String getRaw(Settings primary, Settings secondary) {
+        if (exists(primary)) {
+            return getRaw(primary);
+        }
+        if (exists(secondary)) {
+            return getRaw(secondary);
+        }
+        if (fallbackSetting == null) {
+            return getRaw(primary);
+        }
+        if (fallbackSetting.exists(primary)) {
+            return fallbackSetting.getRaw(primary);
+        }
+        return fallbackSetting.getRaw(secondary);
+    }
+
     public Setting<T> getConcreteSetting(String key) {
         // we use startsWith here since the key might be foo.bar.0 if it's an array
         assert key.startsWith(this.getKey()) : "was " + key + " expected: " + getKey();

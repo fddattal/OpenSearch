@@ -777,6 +777,19 @@ public abstract class AbstractScopedSettings {
         return builder.build();
     }
 
+    // TODO: refactor and merge with below
+    public String getRaw(Setting<?> setting) {
+        if (setting.getProperties().contains(scope) == false) {
+            throw new IllegalArgumentException(
+                "settings scope doesn't match the setting scope [" + this.scope + "] not in [" + setting.getProperties() + "]"
+            );
+        }
+        if (get(setting.getKey()) == null) {
+            throw new IllegalArgumentException("setting " + setting.getKey() + " has not been registered");
+        }
+        return setting.getRaw(this.lastSettingsApplied, settings);
+    }
+
     /**
      * Returns the value for the given setting.
      */
