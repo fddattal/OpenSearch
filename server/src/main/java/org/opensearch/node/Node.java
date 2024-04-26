@@ -198,6 +198,7 @@ import org.opensearch.plugins.PersistentTaskPlugin;
 import org.opensearch.plugins.Plugin;
 import org.opensearch.plugins.PluginsService;
 import org.opensearch.plugins.RepositoryPlugin;
+import org.opensearch.plugins.SDKClientImpl;
 import org.opensearch.plugins.ScriptPlugin;
 import org.opensearch.plugins.SearchPipelinePlugin;
 import org.opensearch.plugins.SearchPlugin;
@@ -871,6 +872,12 @@ public class Node implements Closeable {
                 metadataCreateIndexService
             );
 
+            org.opensearch.sdk.Client sdkClient = new SDKClientImpl(
+                client,
+                clusterService,
+                clusterModule.getIndexNameExpressionResolver()
+            );
+
             Collection<Object> pluginComponents = pluginsService.filterPlugins(Plugin.class)
                 .stream()
                 .flatMap(
@@ -885,7 +892,8 @@ public class Node implements Closeable {
                         nodeEnvironment,
                         namedWriteableRegistry,
                         clusterModule.getIndexNameExpressionResolver(),
-                        repositoriesServiceReference::get
+                        repositoriesServiceReference::get,
+                        sdkClient
                     ).stream()
                 )
                 .collect(Collectors.toList());

@@ -155,6 +155,35 @@ public abstract class Plugin implements Closeable {
         return Collections.emptyList();
     }
 
+    public Collection<Object> createComponents(
+        Client client,
+        ClusterService clusterService,
+        ThreadPool threadPool,
+        ResourceWatcherService resourceWatcherService,
+        ScriptService scriptService,
+        NamedXContentRegistry xContentRegistry,
+        Environment environment,
+        NodeEnvironment nodeEnvironment,
+        NamedWriteableRegistry namedWriteableRegistry,
+        IndexNameExpressionResolver indexNameExpressionResolver,
+        Supplier<RepositoriesService> repositoriesServiceSupplier,
+        org.opensearch.sdk.Client sdkClient
+    ) {
+        return createComponents(
+            client,
+            clusterService,
+            threadPool,
+            resourceWatcherService,
+            scriptService,
+            xContentRegistry,
+            environment,
+            nodeEnvironment,
+            namedWriteableRegistry,
+            indexNameExpressionResolver,
+            repositoriesServiceSupplier
+        );
+    }
+
     /**
      * Additional node settings loaded by the plugin. Note that settings that are explicit in the nodes settings can't be
      * overwritten with the additional settings. These settings added if they don't exist.
