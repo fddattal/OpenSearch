@@ -68,7 +68,7 @@ dependencies {
   api project(":libs:opensearch-geo")
   api project(":libs:opensearch-telemetry")
 
-  implementation "org.opensearch.sdk:opensearch-sdk-java-api:0.0.1"
+  api "org.opensearch.sdk:opensearch-sdk-java-api:0.0.1"
 
   compileOnly project(':libs:opensearch-plugin-classloader')
   testRuntimeOnly project(':libs:opensearch-plugin-classloader')

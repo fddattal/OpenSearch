@@ -15,6 +15,7 @@ import org.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.opensearch.cluster.metadata.MappingMetadata;
 import org.opensearch.cluster.service.ClusterService;
 import org.opensearch.common.CheckedSupplier;
+import org.opensearch.common.annotation.InternalApi;
 import org.opensearch.common.settings.ClusterSettings;
 import org.opensearch.common.settings.Setting;
 import org.opensearch.core.action.ActionListener;
@@ -45,7 +46,8 @@ import java.util.stream.Collectors;
 
 
 // TODO input validation
-/* package private */ class SDKClientImpl implements org.opensearch.sdk.Client {
+@InternalApi
+public class SDKClientImpl implements org.opensearch.sdk.Client {
 
     private final NodeClient nodeClient;
     private final ClusterService clusterService;
