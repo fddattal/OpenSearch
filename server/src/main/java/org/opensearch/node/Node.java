@@ -866,7 +866,8 @@ public class Node implements Closeable {
             org.opensearch.sdk.Client sdkClient = new SDKClientImpl(
                 client,
                 clusterService,
-                clusterModule.getIndexNameExpressionResolver()
+                clusterModule.getIndexNameExpressionResolver(),
+                settingsModule.getIndexScopedSettings()
             );
 
             Collection<Object> pluginComponents = pluginsService.filterPlugins(Plugin.class)
