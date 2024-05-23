@@ -38,6 +38,7 @@ import org.opensearch.cluster.block.ClusterBlockException;
 import org.opensearch.cluster.block.ClusterBlockLevel;
 import org.opensearch.cluster.metadata.IndexNameExpressionResolver;
 import org.opensearch.cluster.service.ClusterService;
+import org.opensearch.common.collect.Tuple;
 import org.opensearch.core.action.ActionListener;
 import org.opensearch.core.action.ActionResponse;
 import org.opensearch.core.common.io.stream.Writeable;
@@ -51,6 +52,8 @@ import org.opensearch.transport.TransportService;
  */
 public abstract class TransportClusterInfoAction<Request extends ClusterInfoRequest<Request>, Response extends ActionResponse> extends
     TransportClusterManagerNodeReadAction<Request, Response> {
+
+    private final ThreadLocal<Tuple<Request, String[]>> concreteIndexNamesCache = ThreadLocal.withInitial(() -> null);
 
     public TransportClusterInfoAction(
         String actionName,
@@ -70,10 +73,21 @@ public abstract class TransportClusterInfoAction<Request extends ClusterInfoRequ
         return ThreadPool.Names.SAME;
     }
 
+    private String[] concreteIndexNames(ClusterState state, Request request) {
+        Tuple<Request, String[]> cachedResult = concreteIndexNamesCache.get();
+        // if it is the same request by reference
+        if (cachedResult != null && cachedResult.v1() == request) {
+            return cachedResult.v2();
+        }
+        String[] result = indexNameExpressionResolver.concreteIndexNames(state, request);
+        concreteIndexNamesCache.set(Tuple.tuple(request, result));
+        return result;
+    }
+
     @Override
     protected ClusterBlockException checkBlock(Request request, ClusterState state) {
         return state.blocks()
-            .indicesBlockedException(ClusterBlockLevel.METADATA_READ, indexNameExpressionResolver.concreteIndexNames(state, request));
+            .indicesBlockedException(ClusterBlockLevel.METADATA_READ, concreteIndexNames(state, request));
     }
 
     /** @deprecated As of 2.2, because supporting inclusive language, replaced by {@link #clusterManagerOperation(ClusterInfoRequest, ClusterState, ActionListener)} */
@@ -84,7 +98,7 @@ public abstract class TransportClusterInfoAction<Request extends ClusterInfoRequ
 
     @Override
     protected final void clusterManagerOperation(final Request request, final ClusterState state, final ActionListener<Response> listener) {
-        String[] concreteIndices = indexNameExpressionResolver.concreteIndexNames(state, request);
+        String[] concreteIndices = concreteIndexNames(state, request);
         doClusterManagerOperation(request, concreteIndices, state, listener);
     }
 
